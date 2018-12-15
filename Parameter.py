@@ -16,4 +16,4 @@ nb_spam_class="spam", "undetermined", "nospam"
 nb_spam_level= 0.67               #nb_level greater_or_equal is spam
 nb_nospam_level= 0.33             #nb_level loweror equal is nospam
                                  #in between is undetermined
-char_replaces={"\n": " ", "_": " ", ".": " ", "\t": " ", "[": " ", "]": " ", "  ": " "}
+char_replaces = {"\n": " ", "_": " ", ".": " ", "\t": " ", "[": " ", "]": " ", "  ": " ", ":": " ", ",": " ", "/": " ", "(": " ", ")": " ", ">": " ", "<": " ", ";": " "}
