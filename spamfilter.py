@@ -23,11 +23,27 @@ spam_dict = []
 nsp_list = []
 spam_list = []
 
-# print("test", file=open(filename_results, "a"))
+actualPath = os.path.dirname(os.path.abspath(__file__))
+print(actualPath + dir_separator + dir_input)
 
 def create_word_features(words):
     my_dict = dict([(word, True) for word in words])
     return my_dict
+
+# def read_input_emails():
+#     inputPath = actualPath + dir_input
+#     input_textlist = []
+#     for directories, subdirs, files in os.walk(inputPath):
+#             if (os.path.split(directories)[1] == 'dir.mail.input'):
+#                 for filename in files:
+#                     with open(os.path.join(directories, filename)) as f:
+#                         print("test")
+#                         input_text = f.read()
+#                         input_textlist.append(input_text)
+#     return input_textlist
+#
+# print(read_input_emails())
+
 
 
 def create_lists_dicts():
@@ -119,7 +135,7 @@ def input_mail_einlesen():
             for filename in files:
                 with open(os.path.join(directories, filename)) as f:
                     input_text = f.read()
-    return input_text
+                return input_text
 
 
 def trainieren():
@@ -150,27 +166,22 @@ def get_email_adress():
     emailadress = re.findall(r'[\w\.-]+@[\w\.-]+', input_mail_einlesen())
     return str(emailadress[0])
 
+
 def mail_bewerten():
-    with open(filename_whitelist, "r") as file1:
-        whitelist_text = file1.read().replace('\n', "")
-    if (get_email_adress()) in whitelist_text:
-        print("Address is in whiteList: NoSpam")
-    with open(filename_blacklist, "r") as file2:
-        blacklist_text = file2.read().replace('\n', "")
-    if str(get_email_adress()) in blacklist_text:
-        print("Address is in blacklist: Spam")
-    else:
-        words = nltk.word_tokenize(input_mail_einlesen())
-        features = create_word_features(words)
-        # if trainieren().classify(features) is "dir.nospam":
-        #     print("Message is No Spam")
-        # if trainieren().classify(features) is "dir.spam":
-        #     print("Message is Spam")
-        print("Message is:" + trainieren().classify(features), file=open(filename_results, "a"))
-    # print(type(whitelist_text))
-    # print(type(get_email_adress()))
-    # print(whitelist_text)
-    # print(get_email_adress())
+    if str(priorityorder[0]) is "whitelist":
+        with open(filename_whitelist, "r") as file1:
+            whitelist_text = file1.read().replace('\n', "")
+        if (get_email_adress()) in whitelist_text:
+            print("Address is in whiteList: NoSpam")
+        with open(filename_blacklist, "r") as file2:
+            blacklist_text = file2.read().replace('\n', "")
+        if str(get_email_adress()) in blacklist_text:
+            print("Address is in blacklist: Spam")
+        else:
+            words = nltk.word_tokenize(input_mail_einlesen())
+            features = create_word_features(words)
+            print("Message is:" + trainieren().classify(features), file=open(filename_results, "a"))
+
 
 trainieren()
 
@@ -199,6 +210,7 @@ mail_bewerten()
 
 print("test")
 print(get_email_adress())
+print(combined_list)
 # Vorbereitungen
 
 # Parameter laden

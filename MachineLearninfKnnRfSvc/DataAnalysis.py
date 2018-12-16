@@ -12,20 +12,7 @@ from sklearn.svm import SVC
 
 import warnings
 warnings.simplefilter(action='ignore')
-
-inputfilename  = 'iris.data'                  #filename input data
-outputfilename = inputfilename + '.erg'       #filename output data
-inputseparator = ','                          #separator for csv columns
-labelcolumn    = 4                            #column of label
-columnfilter   = [0,1,2,3]                    #columns with features
-columnflen     = len(columnfilter)            #count of features in data
-featurecols    = [0,1,2,3]                    #selected Features
-linefilter     = '[70, 72, 83, 106, 119, 133, 134]'                         #linefilter: lines to ignore
-firstrelpred   = 10                           #count of first neighbours in outputlist
-rpdigits       = 4                            #relative prediction: number of digits after decimal point
-dnnrange       = [0,1,2,3,4]                  #show different nearest neighbour range 
-printseparator = '*'*80+'\n'
-columnname = ["sepal_length", "sepal_width", "petal_length", "petal_width", "species"]
+from MachineLearninfKnnRfSvc.ParameterKnnRfSvc import *
 
 #Header in Outputfile
 of=open(outputfilename,'w')
@@ -36,7 +23,7 @@ print(printseparator, file=of)
 
 
 #Load Data
-filedata=[line.split(inputseparator) for line in open(inputfilename).read().split("\n") if line != '']
+filedata=[str(line).replace(",", ".").split(inputseparator) for line in open(inputfilename).read().split("\n")[1:] if line != '']
 
 #Filter Data
 rawdata = [[filedata[j][i] for i in range(len(filedata[j])) if i in columnfilter or i==labelcolumn] for j in range(len(filedata)) if eval('j not in '+linefilter)]
@@ -110,7 +97,7 @@ print(knn_score)
 
 svm = SVC(kernel='linear')
 svm.fit(X_train, y_train)
-Svm_score = svm.score(X_train, y_train)
+Svm_score = svm.score(X_test, y_test)
 print(Svm_score)
 
 # Instantiate model with 1000 decision trees
@@ -128,7 +115,7 @@ rnd_clf = RandomForestClassifier()
 svm_clf = SVC()
 voting_clf = VotingClassifier(estimators=[('rf', rnd_clf), ('svc', svm_clf), ('knn', knn_clf)], voting='hard')
 voting_clf.fit(X_train, y_train)
-ensemble_score = voting_clf.score(X_train, y_train)
+ensemble_score = voting_clf.score(X_test, y_test)
 
 for clf in (knn_clf, rnd_clf, svm_clf):
     clf.fit(X_train, y_train)
