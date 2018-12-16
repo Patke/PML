@@ -15,7 +15,7 @@ warnings.simplefilter(action='ignore')
 from MachineLearninfKnnRfSvc.ParameterKnnRfSvc import *
 
 #Header in Outputfile
-of=open(outputfilename,'w')
+of=open(outputfilename,'a')
 print('Particular Data Analysis (with kNN) [1.2]\n',file=of);
 print(f"selected features: {featurecols}",file=of)
 print(f"ignored lines: {linefilter}",file=of)
@@ -23,6 +23,7 @@ print(printseparator, file=of)
 
 
 #Load Data
+#Different Data, so we have to replace , with . and especially jump over the first line, because its strings
 filedata=[str(line).replace(",", ".").split(inputseparator) for line in open(inputfilename).read().split("\n")[1:] if line != '']
 
 #Filter Data
@@ -59,9 +60,6 @@ print(f"Nodes with different first neighbours", file=of)
 for d in dnnrange:
    print(f"KMP {d}: {[dt[i]['k_maxpred'] for i in range(len(dt))].count(d)} {[i for i in range(len(dt)) if dt[i]['k_maxpred']==d]}", file=of)
 
-#Close up
-of.close()
-
 
 # columnname[['sepal_length', 'sepal_width']] = columnname[['sepal_length', 'sepal_width']].astype(float)
 iris['fla'] = iris['sepal_length']*iris['sepal_width']
@@ -93,23 +91,16 @@ knn.fit(X_train, y_train)
 ## See how the model performs on the test data.
 knn_score = knn.score(X_test, y_test)
 
-print(knn_score)
-
 svm = SVC(kernel='linear')
 svm.fit(X_train, y_train)
 Svm_score = svm.score(X_test, y_test)
-print(Svm_score)
 
-# Instantiate model with 1000 decision trees
+# Instantiate model with decision trees
 rf = RandomForestClassifier()
 # Train the model on training data
 rf.fit(X_train, y_train)
 rf_score = rf.score(X_test, y_test)
-print(rf_score)
 
-
-print("test")
-# print(ensemble_wert)
 knn_clf = KNeighborsClassifier()
 rnd_clf = RandomForestClassifier()
 svm_clf = SVC()
@@ -122,22 +113,29 @@ for clf in (knn_clf, rnd_clf, svm_clf):
     y_pred = clf.predict(X_test)
     print(clf.__class__.__name__, accuracy_score(y_test, y_pred))
 
-print(ensemble_score)
+print("\n", file=of)
+print("KNN                  :", knn_score, file=of)
+print("SVM                  :", Svm_score, file=of)
+print("Random Forest        :", rf_score, file=of)
+print("Ensemble Learning    :", ensemble_score, file=of)
+print("+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++", file=of)
 
-#bagging RandomForest
-bgrf = BaggingClassifier(RandomForestClassifier())
-bgrf.fit(X_train, y_train)
-print(bgrf.fit)
-print(bgrf.score(X_test, y_test))
-
-#bagging KNN
-bgknn = BaggingClassifier(KNeighborsClassifier())
-bgknn.fit(X_train, y_train)
-print(bgknn.fit)
-print(bgknn.score(X_test, y_test))
-
-#bagging SVM
-bgsvm = BaggingClassifier(SVC())
-bgsvm.fit(X_train, y_train)
-print(bgsvm.fit(X_train, y_train))
-print(bgsvm.score(X_test, y_test))
+# #bagging RandomForest
+# bgrf = BaggingClassifier(RandomForestClassifier())
+# bgrf.fit(X_train, y_train)
+# print(bgrf.fit)
+# print(bgrf.score(X_test, y_test))
+#
+# #bagging KNN
+# bgknn = BaggingClassifier(KNeighborsClassifier())
+# bgknn.fit(X_train, y_train)
+# print(bgknn.fit)
+# print(bgknn.score(X_test, y_test))
+#
+# #bagging SVM
+# bgsvm = BaggingClassifier(SVC())
+# bgsvm.fit(X_train, y_train)
+# print(bgsvm.fit(X_train, y_train))
+# print(bgsvm.score(X_test, y_test))
+#Close up
+of.close()
