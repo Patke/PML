@@ -1,8 +1,8 @@
 #Parameter fuer spamfilter.py
 dir_separator="\\"
 dir_root="."+dir_separator
-dir_results="dir.filter.results"+dir_separator
-dir_input="dir.mail.input"+dir_separator
+dir_results="dir.filter.results"
+dir_input="dir.mail.input"
 dir_nospam="dir.nospam"+dir_separator
 dir_spam="dir.spam"+dir_separator
 dir_output="dir.mail.output"+dir_separator

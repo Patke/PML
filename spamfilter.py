@@ -1,4 +1,6 @@
 import os
+import shutil
+
 import pandas as pd
 
 from nltk.classify import NaiveBayesClassifier
@@ -14,7 +16,6 @@ import operator
 
 nltk.download('punkt')
 
-rootdir = "C:\\Users\\Kevin\\PycharmProjects\\PML\\Spamfilter.Template"
 dir_noSpam = "C:\\Users\\Kevin\\PycharmProjects\\PML\\Spamfilter.Template\\dir.nospam"
 dir_Spam = "C:\\Users\\Kevin\\PycharmProjects\\PML\\Spamfilter.Template\\dir.spam"
 
@@ -25,7 +26,7 @@ spam_list = []
 
 actualPath = os.path.dirname(os.path.abspath(__file__))
 print(actualPath + dir_separator + dir_input)
-
+rootdir = actualPath + dir_separator + "Spamfilter.Template"
 def create_word_features(words):
     my_dict = dict([(word, True) for word in words])
     return my_dict
@@ -91,23 +92,27 @@ create_lists_dicts()
 dict_countSpam = {}
 dict_countNoSpam = {}
 dict_countAll = {}
-list_to = nsp_list + spam_list
+print("test")
+print(dict_countSpam)
+list_to = spam_list + nsp_list
+# list_to = dict_countSpam.keys() + dict_countNoSpam.keys()
 
-def create_word_count():
 
-    for word in list_to:
-        dict_countAll[word] = dict_countAll.get(word, 0) + 1
-    for word in nsp_list:
-        dict_countNoSpam[word] = dict_countNoSpam.get(word, 0) + 1
-    for word in spam_list:
-        dict_countSpam[word] = dict_countSpam.get(word, 0) + 1
-    print(nsp_dict)
-    print(dict_countAll)
-    print(dict_countNoSpam)
-    print(dict_countNoSpam["Von"])
-    return dict_countSpam, dict_countNoSpam, dict_countAll
+for word in list_to:
+    dict_countAll[word] = dict_countAll.get(word, 0) + 1
+for word in nsp_list:
+    dict_countNoSpam[word] = dict_countNoSpam.get(word, 0) + 1
+for word in spam_list:
+    dict_countSpam[word] = dict_countSpam.get(word, 0) + 1
+print(nsp_dict)
+print(dict_countAll)
+print(dict_countNoSpam)
+print(dict_countNoSpam["Von"])
+print(dict_countSpam)
 
-create_word_count()
+list_allwords = list(dict_countSpam.keys()) + list(dict_countNoSpam.keys())
+print(list_allwords)
+
 # print("test2")
 
 # sorted_countSpam = sorted(dict_countSpam.items(), key=operator.itemgetter(1))
@@ -129,7 +134,7 @@ create_word_count()
 combined_list = nsp_dict + spam_dict
 
 def input_mail_einlesen():
-    inputPath = "C:\\Users\\Kevin\\PycharmProjects\\PML\\Spamfilter.Template\\dir.mail.input"
+    inputPath = actualPath + dir_separator + dir_input
     for directories, subdirs, files in os.walk(inputPath):
         if (os.path.split(directories)[1] == 'dir.mail.input'):
             for filename in files:
@@ -163,7 +168,8 @@ def trainieren():
     return classifier
 
 def get_email_adress():
-    emailadress = re.findall(r'[\w\.-]+@[\w\.-]+', input_mail_einlesen())
+    emailadress = re.findall(r'[\w\.-]+@[\w\.-]+', str(input_mail_einlesen()))
+    print(emailadress)
     return str(emailadress[0])
 
 
@@ -192,21 +198,66 @@ trainieren()
 
 def create_ausgabe():
     df2 = DataFrame()
-    for a in list_to:
+    df_gesamtzahl = DataFrame()
+    # df_zusammen = DataFrame()
+    # df_spamquoteeinzeln = DataFrame()
+    dict_spamquotegesamt = {}
+    dict_gesamt = {}
+    for a in list_allwords:
         if a not in dict_countNoSpam:
             dict_countNoSpam[a] = 0
         if a not in dict_countSpam:
             dict_countSpam[a] = 0
 
-            df = DataFrame({'Wort': [a], 'NoSpam': dict_countNoSpam[a], 'Spam': dict_countSpam[a]})
-            df2 = df.append(df2, ignore_index=True)
-    print(df2.sort_values(by=['NoSpam']), file=open(filename_results, "a"))
+        df = DataFrame({'Wort': [a], 'NoSpam': dict_countNoSpam[a], 'Spam': dict_countSpam[a]})
+        df2 = df.append(df2, ignore_index=True)
+        dict_gesamt[a] = (dict_countNoSpam[a] + dict_countSpam[a])
+        # print(dict_countNoSpam[a])
+        # print(dict_countSpam[a])
+        # print(dict_gesamt[a])
+
+        # df_gesamtzahl = df_zusammen.append(df_gesamtzahl, ignore_index=True)
+        dict_spamquotegesamt[a] = (dict_countSpam[a])/(dict_gesamt[a])
+    for a in char_replaces:
+        words = input_mail_einlesen().replace(a, " ").split()
+    for x in words:
+        y = 0
+        for i in x:
+            # print(x)
+            # print(i)
+            if i not in dict_spamquotegesamt.keys():
+                pass
+            if i in dict_spamquotegesamt.keys():
+                spamquote =+ dict_spamquotegesamt[i]
+                y =+ 1
+            if not y == 0:
+                spamEmailBewertung = (spamquote)/(y)
+        print(spamEmailBewertung)
+
+    out = open(actualPath + dir_separator + "Spamfilter.Template" + dir_separator + dir_results + "\\spamfilterResults.txt", "w")
+    out2 = open(actualPath + dir_separator + "Spamfilter.Template" + dir_separator + dir_results + "\\spamfilterResults.txt", "w")
+    print(df2.sort_values(by=['NoSpam']), file =out)
+    print(dict_spamquotegesamt, file=out)
+    print(words)
+    print(spamquote)
+    print(actualPath + dir_separator + "Spamfilter.Template" + dir_separator + dir_results + "\\spamfilterResults.txt")
+
+    out.close()
+
+print("Hallo", spam_list)
+            # df_spamquoteeinzeln = DataFrame({'Wort': [a], 'Spamquote': (dict_countSpam[a])/(df_Gesamtzahl[a])})
+            # df_spamquotegesamt = df_spamquoteeinzeln.append(df_spamquotegesamt, ignore_index=True)
+
+    # print(df_gesamtzahl['listinfo'])
+    # print(df_spamquotegesamt)
 
 create_ausgabe()
 
-get_email_adress()
+# get_email_adress()
 
 mail_bewerten()
+
+shutil.copy(actualPath + dir_separator + "Parameter.py", actualPath + dir_separator + "Spamfilter.Template" + dir_separator + dir_results)
 
 print("test")
 print(get_email_adress())
