@@ -17,9 +17,9 @@ import operator
 nltk.download('punkt')
 
 path_current = os.path.dirname(os.path.abspath(__file__))
-dir_noSpam = "C:\\Users\\Kevin\\PycharmProjects\\PML\\Spamfilter.Template\\dir.nospam"
-dir_Spam = "C:\\Users\\Kevin\\PycharmProjects\\PML\\Spamfilter.Template\\dir.spam"
-input_path = path_current + "/dir.mail.input/"
+dir_noSpam = path_current + dir_separator + "dir.nospam"
+dir_Spam = path_current + dir_separator + "dir.spam"
+input_path = path_current + dir_separator + "Spamfilter" + "/dir.mail.input/"
 
 nsp_dict = []
 spam_dict = []
@@ -28,7 +28,7 @@ spam_list = []
 
 actualPath = os.path.dirname(os.path.abspath(__file__))
 print(actualPath + dir_separator + dir_input)
-rootdir = actualPath + dir_separator + "Spamfilter.Template"
+rootdir = actualPath + dir_separator + "Spamfilter"
 print(list(char_replaces))
 
 def create_word_features(words):
@@ -42,7 +42,7 @@ def create_word_features(words):
 #             if (os.path.split(directories)[1] == 'dir.mail.input'):
 #                 for filename in files:
 #                     with open(os.path.join(directories, filename)) as f:
-#                         print("test")
+#                         print("test.txt")
 #                         input_text = f.read()
 #                         input_textlist.append(input_text)
 #     return input_textlist
@@ -96,7 +96,7 @@ create_lists_dicts()
 dict_countSpam = {}
 dict_countNoSpam = {}
 dict_countAll = {}
-print("test")
+print("test.txt")
 print(dict_countSpam)
 list_to = spam_list + nsp_list
 # list_to = dict_countSpam.keys() + dict_countNoSpam.keys()
@@ -108,11 +108,13 @@ for word in nsp_list:
     dict_countNoSpam[word] = dict_countNoSpam.get(word, 0) + 1
 for word in spam_list:
     dict_countSpam[word] = dict_countSpam.get(word, 0) + 1
+
 print(nsp_dict)
 print(dict_countAll)
 print(dict_countNoSpam)
 print(dict_countNoSpam["Von"])
 print(dict_countSpam)
+
 
 list_allwords = list(dict_countSpam.keys()) + list(dict_countNoSpam.keys())
 print(list_allwords)
@@ -126,7 +128,7 @@ print(list_allwords)
 # print(spam_dict[0])
 
 # nsp = list(nsp_dict)
-# print("test")
+# print("test.txt")
 # print(nsp)
 # d = {}
 # for word in nsp:
@@ -145,7 +147,7 @@ def input_mail_list():
             mail_list.append(mail_replaced)
 
 input_mail_list()
-print(mail_list)
+print(mail_list[6])
 
 def input_mail_einlesen():
     for directories, subdirs, files in os.walk(rootdir):
@@ -185,20 +187,20 @@ def get_email_adress():
     return str(emailadress[0])
 
 
-def mail_bewerten():
-    if str(priorityorder[0]) is "whitelist":
-        with open(filename_whitelist, "r") as file1:
-            whitelist_text = file1.read().replace('\n', "")
-        if (get_email_adress()) in whitelist_text:
-            print("Address is in whiteList: NoSpam")
-        with open(filename_blacklist, "r") as file2:
-            blacklist_text = file2.read().replace('\n', "")
-        if str(get_email_adress()) in blacklist_text:
-            print("Address is in blacklist: Spam")
-        else:
-            words = nltk.word_tokenize(input_mail_einlesen())
-            features = create_word_features(words)
-            print("Message is:" + trainieren().classify(features), file=open(filename_results, "a"))
+# def mail_bewerten():
+#     if str(priorityorder[0]) is "whitelist":
+#         with open(filename_whitelist, "r") as file1:
+#             whitelist_text = file1.read().replace('\n', "")
+#         if (get_email_adress()) in whitelist_text:
+#             print("Address is in whiteList: NoSpam")
+#         with open(filename_blacklist, "r") as file2:
+#             blacklist_text = file2.read().replace('\n', "")
+#         if str(get_email_adress()) in blacklist_text:
+#             print("Address is in blacklist: Spam")
+#         else:
+#             words = nltk.word_tokenize(input_mail_einlesen())
+#             features = create_word_features(words)
+#             print("Message is:" + trainieren().classify(features), file=open(filename_results, "a"))
 
 
 trainieren()
@@ -208,6 +210,7 @@ trainieren()
 # Bewertungsklassifikation: WhiteList, NoSpam, undetermined, Spam, BlackList
 # df = DataFrame()
 dict_spamquotegesamt = {}
+
 def create_ausgabe():
     df2 = DataFrame()
     # df_gesamtzahl = DataFrame()
@@ -223,7 +226,7 @@ def create_ausgabe():
             dict_countSpam[a] = 0
 
         df = DataFrame({'Wort': [a], 'NoSpam': dict_countNoSpam[a], 'Spam': dict_countSpam[a]})
-        df2 = df.append(df2, ignore_index=True)
+        # df2 = df.append(df2, ignore_index=True)
         dict_gesamt[a] = (dict_countNoSpam[a] + dict_countSpam[a])
         # print(dict_countNoSpam[a])
         # print(dict_countSpam[a])
@@ -231,24 +234,34 @@ def create_ausgabe():
         # df_gesamtzahl = df_zusammen.append(df_gesamtzahl, ignore_index=True)
         dict_spamquotegesamt[a] = (dict_countSpam[a])/(dict_gesamt[a])
 
+    rating_list = []
 
     for email in mail_list:
         gesamt = 0
         counter = 0
-        for word in email:
+        print(email)
+        for word in email.split():
+            print(word)
             if word in dict_spamquotegesamt:
+                print(dict_spamquotegesamt[word])
                 gesamt = gesamt + dict_spamquotegesamt[word]
-                counter = counter +1
+                counter = counter + 1
+        print(gesamt)
+        print(counter)
+        print(dict_spamquotegesamt)
 
         rating = gesamt/counter
+
         print("Mail Rating:", gesamt/counter)
 
 
         if rating > 0.5:
+            rating_list.append((rating, "Spam"))
             print("Spam")
         elif rating > 0.2 and rating < 0.5:
-            print("undetermined")
-            print("NoSpam")
+            rating_list.append((rating, "undetermined"))
+        else:
+            rating_list.append((rating, "NoSpam"))
 
     for email in mail_list:
         print(email)
@@ -268,20 +281,21 @@ def create_ausgabe():
                             break
 
 
-
     print(dict_spamquotegesamt)
+
+    return rating_list
    # print(spam_email_bewertung)
 
 
-    out = open(actualPath + dir_separator + "Spamfilter.Template" + dir_separator + dir_results + "spamfilterResults.txt", "w")
-    out2 = open(actualPath + dir_separator + "Spamfilter.Template" + dir_separator + dir_results + "spamfilterResults.txt", "w")
+    out = open(actualPath + dir_separator + "Spamfilter" + dir_separator + dir_results + "spamfilterResults.txt", "w")
+    out2 = open(actualPath + dir_separator + "Spamfilter" + dir_separator + dir_results + "spamfilterResults.txt", "w")
     print(df2.sort_values(by=['NoSpam']), file=out)
     print(dict_spamquotegesamt, file=out)
     print(words)
     print(dict_spamquotegesamt)
     print(len(dict_spamquotegesamt))
     # print(spamquote)
-    print(actualPath + dir_separator + "Spamfilter.Template" + dir_separator + dir_results + "\\spamfilterResults.txt")
+    print(actualPath + dir_separator + "Spamfilter" + dir_separator + dir_results + "\\spamfilterResults.txt")
 
     out.close()
 
@@ -292,18 +306,36 @@ print("Hallo", spam_list)
     # print(df_gesamtzahl['listinfo'])
     # print(df_spamquotegesamt)
 
-create_ausgabe()
+rating_list = create_ausgabe()
 
 # get_email_adress()
 
-mail_bewerten()
+# mail_bewerten()
 
 
-for mail in mail_list:
-    output = open(actualPath + dir_separator + "Spamfilter.Template" + dir_separator + "dir.mail.output" + mail[12:20]+".txt", "w")
+for idx, mail in enumerate(mail_list):
+    output = open(actualPath + dir_separator + "Spamfilter" + dir_separator + "dir.mail.output" + dir_separator + mail[12:20]+".txt", "w")
+    print("XSpamProbability:   " + str(rating_list[idx][0]) + "             " +"XSpam:   " + rating_list[idx][1], file= output)
+
+    with open(filename_blacklist, "r") as my_file:
+            blacklist_text = my_file.read().replace('\n', "").split()
+            for line in blacklist_text:
+                if line in mail:
+                        print("XSpam: Blacklist ", file=output)
+                        break
+    with open(filename_whitelist, "r") as my_file:
+            whitelist_text = my_file.read().replace('\n', "").split()
+            for line in whitelist_text:
+                if line in mail:
+                        print("Mail in Whitelist")
+                        print("XSpam: Whitelist ", file=output)
+                        break
+
+
     print(mail, file=output)
 
 
-# shutil.copy(actualPath + dir_separator + "Parameter.py", actualPath + dir_separator + "Spamfilter.Template" + dir_separator + dir_results)
+# shutil.copy(actualPath + dir_separator + "Parameter.py", actualPath + dir_separator + "Spamfilter" + dir_separator + dir_results)
 
 print(dict_spamquotegesamt)
+print(rating_list)

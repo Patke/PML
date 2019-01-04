@@ -8,6 +8,6 @@ import re
 
 nltk.download('punkt')
 
-dir_noSpam = "C:\\Users\\Kevin\\PycharmProjects\\PML\\Spamfilter.Template\\dir.nospam"
-dir_Spam = "C:\\Users\\Kevin\\PycharmProjects\\PML\\Spamfilter.Template\\dir.spam"
+dir_noSpam = "C:\\Users\\Kevin\\PycharmProjects\\PML\\Spamfilter\\dir.nospam"
+dir_Spam = "C:\\Users\\Kevin\\PycharmProjects\\PML\\Spamfilter\\dir.spam"
 

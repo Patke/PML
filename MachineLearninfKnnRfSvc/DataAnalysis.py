@@ -89,7 +89,7 @@ knn = KNeighborsClassifier(n_neighbors=5)
 ## Fit the model on the training data.
 knn.fit(X_train, y_train)
 
-## See how the model performs on the test data.
+## See how the model performs on the test.txt data.
 knn_score = knn.score(X_test, y_test)
 
 svm = SVC(kernel='linear')
