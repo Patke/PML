@@ -247,9 +247,27 @@ def create_ausgabe():
         if rating > 0.5:
             print("Spam")
         elif rating > 0.2 and rating < 0.5:
-            print("undeterminded")
-        else:
+            print("undetermined")
             print("NoSpam")
+
+    for email in mail_list:
+        print(email)
+        with open(filename_blacklist, "r") as my_file:
+                blacklist_text = my_file.read().replace('\n', "").split()
+                for line in blacklist_text:
+                    if line in email:
+                            print(line)
+                            print("Mail in Blacklist")
+                            break
+        with open(filename_whitelist, "r") as my_file:
+                whitelist_text = my_file.read().replace('\n', "").split()
+                for line in whitelist_text:
+                    if line in email:
+                            print(line)
+                            print("Mail in Whitelist")
+                            break
+
+
 
     print(dict_spamquotegesamt)
    # print(spam_email_bewertung)
@@ -279,6 +297,12 @@ create_ausgabe()
 # get_email_adress()
 
 mail_bewerten()
+
+
+for mail in mail_list:
+    output = open(actualPath + dir_separator + "Spamfilter.Template" + dir_separator + "dir.mail.output" + mail[12:20]+".txt", "w")
+    print(mail, file=output)
+
 
 # shutil.copy(actualPath + dir_separator + "Parameter.py", actualPath + dir_separator + "Spamfilter.Template" + dir_separator + dir_results)
 
