@@ -91,27 +91,23 @@ create_lists_dicts()
 dict_countSpam = {}
 dict_countNoSpam = {}
 dict_countAll = {}
-print("test")
-print(dict_countSpam)
-list_to = spam_list + nsp_list
-# list_to = dict_countSpam.keys() + dict_countNoSpam.keys()
+list_to = nsp_list + spam_list
 
+def create_word_count():
 
-for word in list_to:
-    dict_countAll[word] = dict_countAll.get(word, 0) + 1
-for word in nsp_list:
-    dict_countNoSpam[word] = dict_countNoSpam.get(word, 0) + 1
-for word in spam_list:
-    dict_countSpam[word] = dict_countSpam.get(word, 0) + 1
-print(nsp_dict)
-print(dict_countAll)
-print(dict_countNoSpam)
-print(dict_countNoSpam["Von"])
-print(dict_countSpam)
+    for word in list_to:
+        dict_countAll[word] = dict_countAll.get(word, 0) + 1
+    for word in nsp_list:
+        dict_countNoSpam[word] = dict_countNoSpam.get(word, 0) + 1
+    for word in spam_list:
+        dict_countSpam[word] = dict_countSpam.get(word, 0) + 1
+    print(nsp_dict)
+    print(dict_countAll)
+    print(dict_countNoSpam)
+    print(dict_countNoSpam["Von"])
+    return dict_countSpam, dict_countNoSpam, dict_countAll
 
-list_allwords = list(dict_countSpam.keys()) + list(dict_countNoSpam.keys())
-print(list_allwords)
-
+create_word_count()
 # print("test2")
 
 # sorted_countSpam = sorted(dict_countSpam.items(), key=operator.itemgetter(1))
@@ -167,8 +163,7 @@ def trainieren():
     return classifier
 
 def get_email_adress():
-    emailadress = re.findall(r'[\w\.-]+@[\w\.-]+', str(input_mail_einlesen()))
-    print(emailadress)
+    emailadress = re.findall(r'[\w\.-]+@[\w\.-]+', input_mail_einlesen())
     return str(emailadress[0])
 
 
@@ -197,12 +192,7 @@ trainieren()
 
 def create_ausgabe():
     df2 = DataFrame()
-    df_gesamtzahl = DataFrame()
-    # df_zusammen = DataFrame()
-    # df_spamquoteeinzeln = DataFrame()
-    dict_spamquotegesamt = {}
-    dict_gesamt = {}
-    for a in list_allwords:
+    for a in list_to:
         if a not in dict_countNoSpam:
             dict_countNoSpam[a] = 0
         if a not in dict_countSpam:
@@ -210,25 +200,11 @@ def create_ausgabe():
 
             df = DataFrame({'Wort': [a], 'NoSpam': dict_countNoSpam[a], 'Spam': dict_countSpam[a]})
             df2 = df.append(df2, ignore_index=True)
-            dict_gesamt[a] = (dict_countNoSpam[a] + dict_countSpam[a])
-            # df_gesamtzahl = df_zusammen.append(df_gesamtzahl, ignore_index=True)
-            dict_spamquotegesamt[a] = (dict_countSpam[a])/(dict_gesamt[a])
-            print(dict_countNoSpam[a])
-            print("test")
-            print(dict_countSpam[a])
-    print(dict_gesamt)
-    print(list_allwords)
-
-print("Hallo", spam_list)
-            # df_spamquoteeinzeln = DataFrame({'Wort': [a], 'Spamquote': (dict_countSpam[a])/(df_Gesamtzahl[a])})
-            # df_spamquotegesamt = df_spamquoteeinzeln.append(df_spamquotegesamt, ignore_index=True)
-    # print(df2.sort_values(by=['NoSpam']), file=open(filename_results, "a"))
-    # print(df_gesamtzahl['listinfo'])
-    # print(df_spamquotegesamt)
+    print(df2.sort_values(by=['NoSpam']), file=open(filename_results, "a"))
 
 create_ausgabe()
 
-# get_email_adress()
+get_email_adress()
 
 mail_bewerten()
 
