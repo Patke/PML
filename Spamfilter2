@@ -1,0 +1,13 @@
+import os
+from nltk.classify import NaiveBayesClassifier
+import random
+import nltk
+from pandas import DataFrame
+from Parameter import *
+import re
+
+nltk.download('punkt')
+
+dir_noSpam = "C:\\Users\\Kevin\\PycharmProjects\\PML\\Spamfilter.Template\\dir.nospam"
+dir_Spam = "C:\\Users\\Kevin\\PycharmProjects\\PML\\Spamfilter.Template\\dir.spam"
+

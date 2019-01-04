@@ -62,6 +62,7 @@ for d in dnnrange:
 
 
 # columnname[['sepal_length', 'sepal_width']] = columnname[['sepal_length', 'sepal_width']].astype(float)
+
 iris['fla'] = iris['sepal_length']*iris['sepal_width']
 
 print(iris.head())
