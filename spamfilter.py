@@ -1,28 +1,17 @@
 import os
-import shutil
-
-import pandas as pd
-
-from nltk.classify import NaiveBayesClassifier
-import random
-import nltk
-from collections import Counter
-
 from pandas import DataFrame
-
 from Parameter import *
 import re
-import operator
 
-nltk.download('punkt')
+
 
 path_current = os.path.dirname(os.path.abspath(__file__))
 dir_noSpam = path_current + dir_separator + "dir.nospam"
 dir_Spam = path_current + dir_separator + "dir.spam"
 input_path = path_current + dir_separator + "Spamfilter" + "/dir.mail.input/"
 
-nsp_dict = []
-spam_dict = []
+# nsp_dict = []
+# spam_dict = []
 nsp_list = []
 spam_list = []
 
@@ -52,6 +41,7 @@ def create_word_features(words):
 
 
 def create_lists_dicts():
+    # count_word_mail
     for directories, subdirs, files in os.walk(rootdir):
         if (os.path.split(directories)[1] == 'dir.nospam'):
             for filename in files:
@@ -68,9 +58,11 @@ def create_lists_dicts():
                             data = data.replace(test, ' ')
 
                         words = data.split()
-                        nsp_dict.append((create_word_features(words), "dir.nospam"))
+                        # nsp_dict.append((create_word_features(words), "dir.nospam"))
                         for i in words:
                             nsp_list.append(i)
+                        # if i in words
+                        #     count_word_mail = DataFrame({'Wort': [i], 'NoSpam': dict_countNoSpam[a], 'Spam': dict_countSpam[a]})
 
 
         if (os.path.split(directories)[1] == 'dir.spam'):
@@ -88,7 +80,7 @@ def create_lists_dicts():
                             data = data.replace(test, ' ')
 
                         words = data.split()
-                        spam_dict.append((create_word_features(words), "dir.spam"))
+                        # spam_dict.append((create_word_features(words), "dir.spam"))
                         for i in words:
                             spam_list.append(i)
 
@@ -109,7 +101,6 @@ for word in nsp_list:
 for word in spam_list:
     dict_countSpam[word] = dict_countSpam.get(word, 0) + 1
 
-print(nsp_dict)
 print(dict_countAll)
 print(dict_countNoSpam)
 print(dict_countNoSpam["Von"])
@@ -137,7 +128,7 @@ print(list_allwords)
 # # print(spam_list[0])
 
 
-combined_list = nsp_dict + spam_dict
+# combined_list = nsp_dict + spam_dict
 mail_list = []
 
 def input_mail_list():
@@ -147,7 +138,6 @@ def input_mail_list():
             mail_list.append(mail_replaced)
 
 input_mail_list()
-print(mail_list[6])
 
 def input_mail_einlesen():
     for directories, subdirs, files in os.walk(rootdir):
@@ -158,29 +148,29 @@ def input_mail_einlesen():
                 return input_text
 
 
-def trainieren():
-    random.shuffle(combined_list)
-
-    #Training Part ist 25, also 70% von 36
-    training_part = int(len(combined_list) * .7)
-
-    #Training Set wird dann 70% bekommen, also 25
-    training_set = combined_list[:training_part]
-
-    #Test Set bekommt 30%, also 11
-    test_set = combined_list[training_part:]
-
-    #Naive Bayes wird mit dem Training Set trainiert
-    classifier = NaiveBayesClassifier.train(training_set)
-
-    #Genauigkeit wid mit dem Test Set ausgerechnet
-    accuracy = nltk.classify.util.accuracy(classifier, test_set)
-
-    print("Accuracy is: ", accuracy)
-
-    print(classifier.show_most_informative_features(100))
-
-    return classifier
+# def trainieren():
+#     random.shuffle(combined_list)
+#
+#     #Training Part ist 25, also 70% von 36
+#     training_part = int(len(combined_list) * .7)
+#
+#     #Training Set wird dann 70% bekommen, also 25
+#     training_set = combined_list[:training_part]
+#
+#     #Test Set bekommt 30%, also 11
+#     test_set = combined_list[training_part:]
+#
+#     #Naive Bayes wird mit dem Training Set trainiert
+#     classifier = NaiveBayesClassifier.train(training_set)
+#
+#     #Genauigkeit wid mit dem Test Set ausgerechnet
+#     accuracy = nltk.classify.util.accuracy(classifier, test_set)
+#
+#     print("Accuracy is: ", accuracy)
+#
+#     print(classifier.show_most_informative_features(100))
+#
+#     return classifier
 
 def get_email_adress():
     emailadress = re.findall(r'[\w\.-]+@[\w\.-]+', str(input_mail_einlesen()))
@@ -203,7 +193,7 @@ def get_email_adress():
 #             print("Message is:" + trainieren().classify(features), file=open(filename_results, "a"))
 
 
-trainieren()
+# trainieren()
 
 
 
@@ -226,7 +216,7 @@ def create_ausgabe():
             dict_countSpam[a] = 0
 
         df = DataFrame({'Wort': [a], 'NoSpam': dict_countNoSpam[a], 'Spam': dict_countSpam[a]})
-        # df2 = df.append(df2, ignore_index=True)
+        df2 = df.append(df2, ignore_index=True)
         dict_gesamt[a] = (dict_countNoSpam[a] + dict_countSpam[a])
         # print(dict_countNoSpam[a])
         # print(dict_countSpam[a])
@@ -280,24 +270,23 @@ def create_ausgabe():
                             print("Mail in Whitelist")
                             break
 
-
-    print(dict_spamquotegesamt)
-
-    return rating_list
-   # print(spam_email_bewertung)
-
-
-    out = open(actualPath + dir_separator + "Spamfilter" + dir_separator + dir_results + "spamfilterResults.txt", "w")
-    out2 = open(actualPath + dir_separator + "Spamfilter" + dir_separator + dir_results + "spamfilterResults.txt", "w")
+    out = open(actualPath + dir_separator + "Spamfilter" + dir_separator + "dir.filter.results" + dir_separator + "nb.wordtable.txt","w")
     print(df2.sort_values(by=['NoSpam']), file=out)
-    print(dict_spamquotegesamt, file=out)
     print(words)
     print(dict_spamquotegesamt)
     print(len(dict_spamquotegesamt))
     # print(spamquote)
     print(actualPath + dir_separator + "Spamfilter" + dir_separator + dir_results + "\\spamfilterResults.txt")
-
+    print(dict_spamquotegesamt)
     out.close()
+
+    return rating_list
+   # print(spam_email_bewertung)
+
+
+
+
+
 
 print("Hallo", spam_list)
             # df_spamquoteeinzeln = DataFrame({'Wort': [a], 'Spamquote': (dict_countSpam[a])/(df_Gesamtzahl[a])})
@@ -314,7 +303,8 @@ rating_list = create_ausgabe()
 
 
 for idx, mail in enumerate(mail_list):
-    output = open(actualPath + dir_separator + "Spamfilter" + dir_separator + "dir.mail.output" + dir_separator + mail[12:20]+".txt", "w")
+    output = open(actualPath + dir_separator + "Spamfilter" + dir_separator + "dir.mail.output" + dir_separator + mail[3:20]+".txt", "w")
+    bewertungsoutput = open(actualPath + dir_separator + "Spamfilter" + dir_separator + "dir.filter.results" + dir_separator + "spamfilter.results.txt", "w")
     print("XSpamProbability:   " + str(rating_list[idx][0]) + "             " +"XSpam:   " + rating_list[idx][1], file= output)
 
     with open(filename_blacklist, "r") as my_file:
@@ -334,7 +324,12 @@ for idx, mail in enumerate(mail_list):
 
     print(mail, file=output)
 
+output_bewertung = open(actualPath + dir_separator + "Spamfilter" + dir_separator + "dir.filter.results" + dir_separator + "spamfilter.results.txt", "w")
 
+print("Auswertepriorität: blacklist, whitelist, naive_bayes" + "    " + "Klassifizierungsgrenzen: spam (1.0 bis 0.5), undetermined (0,5 bis 0,2) und nospam [0,2 bis 0.0]", file=output_bewertung)
+print("*******************************************************************************************************************************************************************", file= output_bewertung)
+for idx, mail in enumerate(mail_list):
+    print(mail[3:20] + "    " + "XSpamProbability:  " + str(rating_list[idx][0]) + "  " + "XSpam:   " + rating_list[idx][1], file=output_bewertung)
 # shutil.copy(actualPath + dir_separator + "Parameter.py", actualPath + dir_separator + "Spamfilter" + dir_separator + dir_results)
 
 print(dict_spamquotegesamt)
