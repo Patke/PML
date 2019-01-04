@@ -1,0 +1,8 @@
+uclaeditorjake3@gmailcom: Mail in Blacklist
+*******************************************************************************************************************************************************************
+Frederik Dietrich    XSpamProbability:  0.23186324263682667  XSpam:   undetermined
+Im Auftrag der Bi    XSpamProbability:  0.22004479860690856  XSpam:   undetermined
+E-3 Magazin web@b    XSpamProbability:  0.6503422953384723  XSpam:   Spam
+Jake Carpenter uc    XSpamProbability:  0.9141094484390442  XSpam:   Spam
+Professoren profe    XSpamProbability:  0.3487693222318821  XSpam:   undetermined
+Testsender sender    XSpamProbability:  0.4341804968696713  XSpam:   undetermined
